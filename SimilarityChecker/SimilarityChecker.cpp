@@ -30,8 +30,8 @@ private:
 
 	int getPartialScore(const string& leftStr, const string& rightStr)
 	{
-		int gap = getLengthGap(leftStr, rightStr);
-		int shortStringLength = getShortStringLength(leftStr, rightStr);
+		const int gap = getLengthGap(leftStr, rightStr);
+		const int shortStringLength = getShortStringLength(leftStr, rightStr);
 
 		return (1 - ((double)gap / (double)shortStringLength)) * MAX_LENGTH_CHECK_SCORE;
 	}
