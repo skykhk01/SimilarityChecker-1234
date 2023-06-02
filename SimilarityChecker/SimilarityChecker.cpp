@@ -73,14 +73,14 @@ private:
 
 	void initLeftStringAlpshabet(const string& str)
 	{
-		memset(leftStringAlphabet, 0, sizeof(int) * MAX_ALPHABET_SIZE);
-		for (char ch : str) leftStringAlphabet[ch - 'A']++;
+		memset(leftStringAlphabet, false, sizeof(bool) * MAX_ALPHABET_SIZE);
+		for (char ch : str) leftStringAlphabet[ch - 'A'] = true;
 	}
 
 	void initRightStringAlpshabet(const string& str)
 	{
-		memset(rightStringAlphabet, 0, sizeof(int) * MAX_ALPHABET_SIZE);
-		for (char ch : str) rightStringAlphabet[ch - 'A']++;
+		memset(rightStringAlphabet, false, sizeof(bool) * MAX_ALPHABET_SIZE);
+		for (char ch : str) rightStringAlphabet[ch - 'A'] = true;
 	}
 
 	int getAlphabetCheckScore()
@@ -121,6 +121,6 @@ private:
 	const int MAX_LENGTH_CHECK_SCORE = 60;
 	const int MAX_ALPHABET_CHECK_SCORE = 40;
 
-	int leftStringAlphabet[MAX_ALPHABET_SIZE];
-	int rightStringAlphabet[MAX_ALPHABET_SIZE];
+	bool leftStringAlphabet[MAX_ALPHABET_SIZE];
+	bool rightStringAlphabet[MAX_ALPHABET_SIZE];
 };
