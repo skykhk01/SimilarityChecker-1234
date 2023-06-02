@@ -1,8 +1,11 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
+#include <vector>
 
 using namespace std;
+
+#define MAX_ALPHABET_SIZE (26)
 
 class SimilarityChecker
 {
@@ -16,7 +19,18 @@ public:
 		if (leftStr.length() >= 2 * rightStr.length()) return 0;
 		if (rightStr.length() >= 2 * leftStr.length()) return 0;
 
-		return getPartialScore(leftStr, rightStr);
+		return getLengthCheckPartialScore(leftStr, rightStr);
+	}
+
+	int getAlphabetCheckScore(const string& leftStr, const string& rightStr)
+	{
+		assertIllegalArgument(leftStr);
+		assertIllegalArgument(rightStr);
+
+		initLeftStringAlpshabet(leftStr);
+		initRightStringAlpshabet(rightStr);
+		
+		return getAlphabetCheckScore();
 	}
 
 private:
@@ -26,9 +40,14 @@ private:
 		{
 			throw std::invalid_argument("글자를 입력해주세요");
 		}
+
+		for (char ch : str)
+		{
+			if (ch < 'A' || ch > 'Z') throw std::invalid_argument("입력은 알파벳 대문자만 가능합니다.");
+		}
 	}
 
-	int getPartialScore(const string& leftStr, const string& rightStr)
+	int getLengthCheckPartialScore(const string& leftStr, const string& rightStr)
 	{
 		const int gap = getLengthGap(leftStr, rightStr);
 		const int shortStringLength = getShortStringLength(leftStr, rightStr);
@@ -38,7 +57,7 @@ private:
 
 	int getLengthGap(const string& leftStr, const string& rightStr)
 	{
-		if (leftStr.length() > rightStr.length()) 
+		if (leftStr.length() > rightStr.length())
 			return leftStr.length() - rightStr.length();
 
 		return rightStr.length() - leftStr.length();
@@ -46,12 +65,62 @@ private:
 
 	int getShortStringLength(const string& leftStr, const string& rightStr)
 	{
-		if (leftStr.length() > rightStr.length()) 
+		if (leftStr.length() > rightStr.length())
 			return rightStr.length();
 
 		return leftStr.length();
 	}
 
+	void initLeftStringAlpshabet(const string& str)
+	{
+		memset(leftStringAlphabet, false, sizeof(bool) * MAX_ALPHABET_SIZE);
+		for (char ch : str) leftStringAlphabet[ch - 'A'] = true;
+	}
+
+	void initRightStringAlpshabet(const string& str)
+	{
+		memset(rightStringAlphabet, false, sizeof(bool) * MAX_ALPHABET_SIZE);
+		for (char ch : str) rightStringAlphabet[ch - 'A'] = true;
+	}
+
+	int getAlphabetCheckScore()
+	{
+		const int totalCnt = getTotalUsedAlphabetCount();
+		const int sameCnt = getSameUsedAlphabetCount();
+
+		return ((double)sameCnt / (double)totalCnt) * MAX_ALPHABET_CHECK_SCORE;
+	}
+
+	int getTotalUsedAlphabetCount()
+	{
+		int cnt = 0;
+
+		for (int i = 0;i < MAX_ALPHABET_SIZE; ++i)
+		{
+			if (leftStringAlphabet[i] || rightStringAlphabet[i])
+				cnt++;
+		}
+
+		return cnt;
+	}
+
+	int getSameUsedAlphabetCount()
+	{
+		int cnt = 0;
+
+		for (int i = 0;i < MAX_ALPHABET_SIZE; ++i)
+		{
+			if (leftStringAlphabet[i] && rightStringAlphabet[i]) 
+				cnt++;
+		}
+
+		return cnt;
+	}
+
 private:
 	const int MAX_LENGTH_CHECK_SCORE = 60;
+	const int MAX_ALPHABET_CHECK_SCORE = 40;
+
+	bool leftStringAlphabet[MAX_ALPHABET_SIZE];
+	bool rightStringAlphabet[MAX_ALPHABET_SIZE];
 };
