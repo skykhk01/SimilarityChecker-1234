@@ -9,7 +9,8 @@ class SimilarityChecker
 public:
 	int getLengthCheckScore(const string& leftStr, const string& rightStr)
 	{
-		assertIllegalArgument(leftStr, rightStr);
+		assertIllegalArgument(leftStr);
+		assertIllegalArgument(rightStr);
 
 		if (leftStr.length() == rightStr.length()) return MAX_LENGTH_CHECK_SCORE;
 		if (leftStr.length() >= 2 * rightStr.length()) return 0;
@@ -19,12 +20,20 @@ public:
 	}
 
 private:
-	void assertIllegalArgument(const string& leftStr, const string& rightStr)
+	void assertIllegalArgument(const string& str)
 	{
-		if (leftStr == "" || rightStr == "")
+		if (str == "")
 		{
 			throw std::invalid_argument("글자를 입력해주세요");
 		}
+	}
+
+	int getPartialScore(const string& leftStr, const string& rightStr)
+	{
+		int gap = getLengthGap(leftStr, rightStr);
+		int shortStringLength = getShortStringLength(leftStr, rightStr);
+
+		return (1 - ((double)gap / (double)shortStringLength)) * MAX_LENGTH_CHECK_SCORE;
 	}
 
 	int getLengthGap(const string& leftStr, const string& rightStr)
@@ -41,14 +50,6 @@ private:
 			return rightStr.length();
 
 		return leftStr.length();
-	}
-
-	int getPartialScore(const string& leftStr, const string& rightStr)
-	{
-		int gap = getLengthGap(leftStr, rightStr);
-		int shortStringLength = getShortStringLength(leftStr, rightStr);
-
-		return (1 - ((double)gap / (double)shortStringLength)) * MAX_LENGTH_CHECK_SCORE;
 	}
 
 private:
